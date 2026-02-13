@@ -1,0 +1,42 @@
+name: Release rtree
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build release binary
+        run: cargo build --release --locked
+
+      - name: Prepare release assets
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path dist -Force | Out-Null
+          Copy-Item target\release\rtree.exe dist\rtree-windows-x86_64.exe
+          Compress-Archive -Path dist\rtree-windows-x86_64.exe -DestinationPath dist\rtree-windows-x86_64.zip -Force
+
+      - name: Create GitHub release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/rtree-windows-x86_64.exe
+            dist/rtree-windows-x86_64.zip
+          generate_release_notes: true

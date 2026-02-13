@@ -1,0 +1,18 @@
+# Rust build output
+/target/
+
+# Cargo lockfile for libraries (keep for binaries; this repo is a binary)
+# If you want to ignore it anyway, uncomment the next line.
+# /Cargo.lock
+
+# Backup files
+*.rs.bk
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE settings
+.idea/
+.vscode/
